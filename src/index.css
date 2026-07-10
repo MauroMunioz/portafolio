@@ -114,6 +114,10 @@
   -webkit-text-fill-color: transparent;
 }
 
+.card-img_hover {
+  transition: 0.3s ease;
+}
+
 /* canvas- styles */
 .canvas-loader {
   font-size: 10px;
