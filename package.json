@@ -13,14 +13,17 @@
     "@emailjs/browser": "^4.4.1",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
+    "@react-three/postprocessing": "^3.0.4",
     "framer-motion": "^12.42.2",
+    "gsap": "^3.15.0",
     "maath": "^0.10.8",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-parallax-tilt": "^1.7.333",
     "react-router-dom": "^7.18.1",
     "react-vertical-timeline-component": "^4.0.0",
-    "three": "^0.185.1"
+    "three": "^0.185.1",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",

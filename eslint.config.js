@@ -37,7 +37,7 @@ export default [
     },
   },
   {
-    files: ['src/components/canvas/**/*.jsx'],
+    files: ['src/three/**/*.jsx'],
     rules: {
       'react/no-unknown-property': 'off',
     },

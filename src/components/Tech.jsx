@@ -1,16 +1,21 @@
-import { technologies } from "../constants";
-import { BallCanvas } from "./canvas";
+import { motion } from "framer-motion";
+import { styles } from "../styles";
+import { textVariant } from "../utils/motion";
 import { SectionWrapper } from "../hoc";
+import TechCanvas from "../three/tech/TechCanvas";
 
 const Tech = () => {
   return (
-    <div className="flex flex-row flex-wrap justify-center gap-10">
-      {technologies.map((technology) => (
-        <div className="w-28 h-28" key={technology.name}>
-          <BallCanvas icon={technology.icon} />
-        </div>
-      ))}
-    </div>
+    <>
+      <motion.div variants={textVariant()}>
+        <span className="hud-label">Onboard Systems</span>
+        <h2 className={`${styles.sectionHeadText} mt-3`}>Instruments.</h2>
+      </motion.div>
+
+      <div className="mt-6 w-full h-[420px]">
+        <TechCanvas />
+      </div>
+    </>
   );
 };
 

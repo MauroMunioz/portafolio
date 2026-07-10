@@ -7,26 +7,36 @@ import {
   Navbar,
   Tech,
   Works,
-  StarsCanvas,
 } from "./components";
+import Scene from "./three/Scene";
+import { useScrollProgress } from "./hooks/useScrollProgress";
+
 const App = () => {
+  useScrollProgress();
+
   return (
-      <BrowserRouter>
-        <div className="relative z-0 bg-primary">
-          <div className="bg-hero-pattern bg-cover bg-no-repeat bg-center">
-            <Navbar />
-            <Hero />
-          </div>
-          <About />
-          <Experience />
-          <Tech />
-          <Works />
-          <div className="relative z-0">
-            <Contact />
-            <StarsCanvas/>
-          </div>
+    <BrowserRouter>
+      <Scene />
+      <div className="relative z-10 pointer-events-none">
+        <Navbar />
+        <div data-scene="hero">
+          <Hero />
         </div>
-      </BrowserRouter>
+        <div data-scene="about">
+          <About />
+          <Tech />
+        </div>
+        <div data-scene="experience" className="min-h-[120vh]">
+          <Experience />
+        </div>
+        <div data-scene="work" className="min-h-[240vh]">
+          <Works />
+        </div>
+        <div data-scene="contact">
+          <Contact />
+        </div>
+      </div>
+    </BrowserRouter>
   );
 };
 

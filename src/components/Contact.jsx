@@ -1,17 +1,32 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import emailjs from "@emailjs/browser";
 import { motion } from "framer-motion";
 
-import { styles } from "../styles";
-import { EarthCanvas } from "./canvas";
 import { SectionWrapper } from "../hoc";
 import { slideIn } from "../utils/motion";
+import { useSceneStore } from "../store/scene-store";
 
 const Contact = () => {
   const formRef = useRef();
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(null);
+
+  const setTypingEnergy = useSceneStore((s) => s.setTypingEnergy);
+  const setTransmission = useSceneStore((s) => s.setTransmission);
+
+  useEffect(() => {
+    const filled =
+      (form.name.length + form.email.length + form.message.length) / 60;
+    setTypingEnergy(Math.min(filled, 1));
+  }, [form, setTypingEnergy]);
+
+  useEffect(() => {
+    return () => {
+      setTypingEnergy(0);
+      setTransmission("idle");
+    };
+  }, [setTypingEnergy, setTransmission]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,6 +37,7 @@ const Contact = () => {
     e.preventDefault();
     setLoading(true);
     setStatus(null);
+    setTransmission("sending");
 
     emailjs
       .send(
@@ -41,92 +57,99 @@ const Contact = () => {
           setLoading(false);
           setStatus("success");
           setForm({ name: "", email: "", message: "" });
+          setTransmission("sent");
+          setTimeout(() => setTransmission("idle"), 4000);
         },
         (error) => {
           setLoading(false);
           setStatus("error");
+          setTransmission("idle");
           console.error(error);
         }
       );
   };
 
   return (
-    <div className="xl:mt-12 flex xl:flex-row flex-col-reverse gap-10 overflow-hidden">
+    <div className="w-full flex justify-start">
       <motion.div
         variants={slideIn("left", "tween", 0.2, 1)}
-        className="flex-[0.75] bg-black-100 p-8 rounded-2xl"
+        className="glass-panel holo-pulse w-full max-w-md sm:max-w-lg p-6 pointer-events-auto"
       >
-        <p className={styles.sectionSubText}>Get in touch</p>
-        <h3 className={styles.sectionHeadText}>Contact.</h3>
+        <div className="flex items-center gap-3">
+          <span className="w-2 h-2 rounded-full bg-signal-cyan hud-blink" />
+          <span className="hud-label">Final Destination</span>
+        </div>
+        <h3 className="text-ion-white font-black text-[32px] sm:text-[40px] leading-tight mt-3">
+          Transmission.
+        </h3>
 
         <form
           ref={formRef}
           onSubmit={handleSubmit}
-          className="mt-12 flex flex-col gap-8"
+          className="mt-5 flex flex-col gap-3.5"
         >
           <label className="flex flex-col">
-            <span className="text-white font-medium mb-4">Your Name</span>
+            <span className="hud-label mb-1.5">Caller ID</span>
             <input
               type="text"
               name="name"
               value={form.name}
               onChange={handleChange}
-              placeholder="What's your name?"
+              placeholder="Your name"
               required
-              className="bg-tertiary py-4 px-6 placeholder:text-secondary text-white rounded-lg outline-none border-none font-medium"
+              className="bg-black-200/70 py-2.5 px-4 placeholder:text-secondary text-ion-white rounded-lg outline-none border border-signal-cyan/15 focus:border-signal-cyan/50 font-medium transition-colors"
             />
           </label>
           <label className="flex flex-col">
-            <span className="text-white font-medium mb-4">Your Email</span>
+            <span className="hud-label mb-1.5">Return Frequency</span>
             <input
               type="email"
               name="email"
               value={form.email}
               onChange={handleChange}
-              placeholder="What's your email?"
+              placeholder="your@email.com"
               required
-              className="bg-tertiary py-4 px-6 placeholder:text-secondary text-white rounded-lg outline-none border-none font-medium"
+              className="bg-black-200/70 py-2.5 px-4 placeholder:text-secondary text-ion-white rounded-lg outline-none border border-signal-cyan/15 focus:border-signal-cyan/50 font-medium transition-colors"
             />
           </label>
           <label className="flex flex-col">
-            <span className="text-white font-medium mb-4">Your Message</span>
+            <span className="hud-label mb-1.5">Message Payload</span>
             <textarea
-              rows={7}
+              rows={3}
               name="message"
               value={form.message}
               onChange={handleChange}
-              placeholder="What do you want to say?"
+              placeholder="What do you want to transmit?"
               required
-              className="bg-tertiary py-4 px-6 placeholder:text-secondary text-white rounded-lg outline-none border-none font-medium"
+              className="bg-black-200/70 py-2.5 px-4 placeholder:text-secondary text-ion-white rounded-lg outline-none border border-signal-cyan/15 focus:border-signal-cyan/50 font-medium transition-colors resize-none"
             />
           </label>
 
           <button
             type="submit"
             disabled={loading}
-            className="bg-tertiary py-3 px-8 rounded-xl outline-none w-fit text-white font-bold shadow-md shadow-primary disabled:opacity-50"
+            className="hud-label bg-signal-cyan/10 hover:bg-signal-cyan/20 border border-signal-cyan/40 py-3 px-8 rounded-lg outline-none w-fit text-signal-cyan transition-colors disabled:opacity-50 mt-1"
           >
-            {loading ? "Sending..." : "Send"}
+            {loading ? "Transmitting..." : "Send Transmission"}
           </button>
 
           {status === "success" && (
-            <p className="text-green-400 font-medium">
-              Thank you. I will get back to you as soon as possible.
-            </p>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <p className="hud-value text-signal-cyan text-[16px] tracking-widest">
+                TRANSMISSION SUCCESSFUL
+              </p>
+              <p className="hud-label text-engine-amber mt-1">Mission Complete</p>
+            </motion.div>
           )}
           {status === "error" && (
-            <p className="text-red-400 font-medium">
-              Something went wrong. Please try again.
+            <p className="hud-value text-engine-amber text-[14px]">
+              Signal lost. Please retry the transmission.
             </p>
           )}
         </form>
-      </motion.div>
-
-      <motion.div
-        variants={slideIn("right", "tween", 0.2, 1)}
-        className="xl:flex-1 xl:h-auto md:h-[550px] h-[350px]"
-      >
-        <EarthCanvas />
       </motion.div>
     </div>
   );

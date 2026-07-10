@@ -1,96 +1,117 @@
-import Tilt from "react-parallax-tilt";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
-import { styles } from "../styles";
-import { github } from "../assets";
 import { SectionWrapper } from "../hoc";
 import { projects } from "../constants";
-import { fadeIn, textVariant } from "../utils/motion";
+import { textVariant } from "../utils/motion";
+import { useSceneStore } from "../store/scene-store";
 
-const ProjectCard = ({
-  index,
-  name,
-  description,
-  tags,
-  image,
-  source_code_link,
-}) => {
-  return (
-    <motion.div variants={fadeIn("up", "spring", index * 0.5, 0.75)}>
-      <Tilt
-        tiltMaxAngleX={45}
-        tiltMaxAngleY={45}
-        scale={1}
-        transitionSpeed={450}
-        className="bg-tertiary p-5 rounded-2xl sm:w-[360px] w-full"
-      >
-        <div className="relative w-full h-[230px]">
-          <img
-            src={image}
-            alt={name}
-            className="w-full h-full object-cover rounded-2xl"
-          />
-
-          {source_code_link && (
-            <div className="absolute inset-0 flex justify-end m-3 card-img_hover">
-              <div
-                onClick={() => window.open(source_code_link, "_blank")}
-                className="black-gradient w-10 h-10 rounded-full flex justify-center items-center cursor-pointer"
-              >
-                <img
-                  src={github}
-                  alt="source code"
-                  className="w-1/2 h-1/2 object-contain"
-                />
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="mt-5">
-          <h3 className="text-white font-bold text-[24px]">{name}</h3>
-          <p className="mt-2 text-secondary text-[14px]">{description}</p>
-        </div>
-
-        <div className="mt-4 flex flex-wrap gap-2">
-          {tags.map((tag) => (
-            <p key={tag.name} className={`text-[14px] ${tag.color}`}>
-              #{tag.name}
-            </p>
-          ))}
-        </div>
-      </Tilt>
-    </motion.div>
-  );
+const scrollToPlanet = (i, count) => {
+  const el = document.querySelector('[data-scene="work"]');
+  if (!el) return;
+  const slot = (i + 0.5) / count;
+  const target = el.offsetTop + slot * el.offsetHeight - window.innerHeight * 0.5;
+  window.scrollTo({ top: target, behavior: "smooth" });
 };
 
 const Works = () => {
+  const focused = useSceneStore((s) => s.focusedProject);
+  const active = useSceneStore((s) => s.activeSection);
+  const project = focused >= 0 ? projects[focused] : null;
+
   return (
     <>
       <motion.div variants={textVariant()}>
-        <p className={styles.sectionSubText}>My work</p>
-        <h2 className={styles.sectionHeadText}>Projects.</h2>
+        <div className="flex items-center gap-3">
+          <span className="w-2 h-2 rounded-full bg-signal-cyan hud-blink" />
+          <span className="hud-label">Planetary Survey</span>
+        </div>
+        <h2 className="text-ion-white font-black text-[40px] sm:text-[52px] leading-none mt-3">
+          Projects.
+        </h2>
       </motion.div>
 
-      <div className="w-full flex">
-        <motion.p
-          variants={fadeIn("", "", 0.1, 1)}
-          className="mt-3 text-secondary text-[17px] max-w-3xl leading-[30px]"
-        >
-          The following projects showcase real systems I built end to end,
-          from data modeling to deployment. Each project reflects my ability
-          to solve complex problems, work across different stacks, and
-          maintain projects long term.
-        </motion.p>
+      <div className="mt-6 min-h-[240px] max-w-[420px]">
+        <AnimatePresence mode="wait">
+          {project ? (
+            <motion.div
+              key={focused}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.35 }}
+              className="glass-panel holo-pulse p-5 rounded-xl"
+            >
+              <div className="flex items-center justify-between">
+                <span className="hud-label text-signal-cyan">
+                  Planet {String(focused + 1).padStart(2, "0")}
+                </span>
+                <span className="hud-label text-[9px] text-secondary">
+                  {focused + 1} / {projects.length}
+                </span>
+              </div>
+              <h3 className="text-ion-white font-bold text-[24px] mt-2">
+                {project.name}
+              </h3>
+              <p className="mt-2 text-secondary text-[13px] leading-[20px]">
+                {project.description}
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {project.tags.map((tag) => (
+                  <span
+                    key={tag.name}
+                    className="hud-label text-[10px] px-2 py-1 rounded border border-signal-cyan/25"
+                  >
+                    {tag.name}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="scanning"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="flex items-center gap-3 pt-4"
+            >
+              <span className="hud-line w-16" />
+              <span className="hud-label text-[9px] text-engine-amber hud-blink">
+                Scanning orbit — approach a planet
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
-      <div className="mt-20 flex flex-wrap gap-7">
-        {projects.map((project, index) => (
-          <ProjectCard key={`project-${index}`} index={index} {...project} />
-        ))}
-      </div>
+      {active === "work" && (
+        <div className="fixed right-6 top-1/2 -translate-y-1/2 flex flex-col items-center gap-4 pointer-events-auto z-20">
+          {projects.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => scrollToPlanet(i, projects.length)}
+              aria-label={`Go to planet ${i + 1}`}
+              className="group flex items-center gap-2"
+            >
+              <span
+                className={`hud-label text-[9px] transition-opacity ${
+                  focused === i ? "opacity-80" : "opacity-0 group-hover:opacity-60"
+                }`}
+              >
+                {projects[i]?.name}
+              </span>
+              <span
+                className={`w-3 h-3 rounded-full border transition-all ${
+                  focused === i
+                    ? "bg-signal-cyan border-signal-cyan scale-125 shadow-glow"
+                    : "border-secondary/50 group-hover:border-signal-cyan"
+                }`}
+              />
+            </button>
+          ))}
+        </div>
+      )}
     </>
   );
 };
 
-export default SectionWrapper(Works, "work");
+export default SectionWrapper(Works, "work", "sticky top-0 !justify-start pt-28");
