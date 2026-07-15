@@ -24,6 +24,26 @@ export const STATION_POS = place(STATION_T, 11, 3, 0);
 export const CONSTELLATION_POS = place(CONSTELLATION_T, -12, 5, 0);
 export const COMMS_PLANET_POS = place(COMMS_T, 7, 0.5, 0);
 
+export const STATION_CAM_POS = [
+  STATION_POS[0] - 1.5,
+  STATION_POS[1] + 0.5,
+  STATION_POS[2] + 11,
+];
+export const STATION_LOOK = [
+  STATION_POS[0] - 4,
+  STATION_POS[1] - 0.5,
+  STATION_POS[2],
+];
+
 export const WORK_PLANET_POS = [4, 0, -60];
 export const WORK_CAM_POS = [-4, 2, -46];
 export const WORK_LOOK = [0.5, 0, -60];
+
+export const SHIP_ANCHORS = {
+  about: { pos: [7.5, 2.5, -15], look: STATION_POS },
+  work: { pos: [-5, -2.5, -59], look: WORK_PLANET_POS },
+  contact: {
+    pos: [COMMS_PLANET_POS[0] - 7, COMMS_PLANET_POS[1] - 0.5, COMMS_PLANET_POS[2] + 6],
+    look: COMMS_PLANET_POS,
+  },
+};

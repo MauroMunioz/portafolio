@@ -9,6 +9,8 @@ import {
   COMMS_PLANET_POS,
   WORK_CAM_POS,
   WORK_LOOK,
+  STATION_CAM_POS,
+  STATION_LOOK,
 } from "./journey";
 
 const commsParkPos = new THREE.Vector3(
@@ -23,6 +25,8 @@ const commsLook = new THREE.Vector3(
 );
 const workParkPos = new THREE.Vector3(...WORK_CAM_POS);
 const workLook = new THREE.Vector3(...WORK_LOOK);
+const stationParkPos = new THREE.Vector3(...STATION_CAM_POS);
+const stationLook = new THREE.Vector3(...STATION_LOOK);
 
 const CameraRig = () => {
   const camPos = useRef(new THREE.Vector3(0, 1.4, 8));
@@ -40,6 +44,9 @@ const CameraRig = () => {
     } else if (activeSection === "work") {
       camPos.current.copy(workParkPos);
       lookTarget.current.copy(workLook);
+    } else if (activeSection === "about") {
+      camPos.current.copy(stationParkPos);
+      lookTarget.current.copy(stationLook);
     } else {
       journeyPoint(globalProgress, camPos.current);
       camPos.current.y += 1.4;

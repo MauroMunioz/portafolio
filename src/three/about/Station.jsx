@@ -1,10 +1,11 @@
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Float } from "@react-three/drei";
+import { useGLTF, Clone, Float } from "@react-three/drei";
+import * as THREE from "three";
 import { STATION_POS } from "../journey";
 
-const HULL = "#232840";
 const CYAN = "#5ef0ff";
+const TARGET_SIZE = 15;
 
 const HoloPanel = ({ position, rotation, scale = 1 }) => {
   const mat = useRef();
@@ -25,72 +26,45 @@ const HoloPanel = ({ position, rotation, scale = 1 }) => {
 };
 
 const Station = () => {
-  const ring = useRef();
-  const inner = useRef();
+  const { scene } = useGLTF("/space_station/scene.gltf");
+  const spinner = useRef();
+
+  const { normScale, offset } = useMemo(() => {
+    const box = new THREE.Box3().setFromObject(scene);
+    const size = new THREE.Vector3();
+    box.getSize(size);
+    const maxDim = Math.max(size.x, size.y, size.z) || 1;
+    const center = new THREE.Vector3();
+    box.getCenter(center);
+    return { normScale: TARGET_SIZE / maxDim, offset: center.multiplyScalar(-1) };
+  }, [scene]);
 
   useFrame((_state, delta) => {
-    ring.current.rotation.z += delta * 0.08;
-    inner.current.rotation.y += delta * 0.15;
+    if (spinner.current) spinner.current.rotation.y += delta * 0.05;
   });
 
   return (
-    <group position={STATION_POS}>
-      <mesh ref={ring} rotation={[Math.PI / 2.4, 0, 0]}>
-        <torusGeometry args={[4.2, 0.28, 12, 64]} />
-        <meshStandardMaterial
-          color={HULL}
-          metalness={0.8}
-          roughness={0.3}
-          emissive={CYAN}
-          emissiveIntensity={0.12}
-        />
-      </mesh>
-
-      <group ref={inner}>
-        <mesh>
-          <cylinderGeometry args={[0.7, 0.7, 2.6, 16]} />
-          <meshStandardMaterial color={HULL} metalness={0.75} roughness={0.35} />
-        </mesh>
-        <mesh position={[0, 1.6, 0]}>
-          <sphereGeometry args={[0.55, 16, 16]} />
-          <meshStandardMaterial
-            color="#0e2b3a"
-            emissive={CYAN}
-            emissiveIntensity={0.6}
-            metalness={0.4}
-            roughness={0.2}
-          />
-        </mesh>
-        {[0, 1, 2, 3].map((i) => (
-          <mesh
-            key={i}
-            position={[
-              Math.cos((i * Math.PI) / 2) * 1.6,
-              0,
-              Math.sin((i * Math.PI) / 2) * 1.6,
-            ]}
-            rotation={[0, -(i * Math.PI) / 2, 0]}
-          >
-            <boxGeometry args={[0.06, 1.1, 1.8]} />
-            <meshStandardMaterial
-              color={HULL}
-              metalness={0.7}
-              roughness={0.4}
-              emissive={CYAN}
-              emissiveIntensity={0.2}
-            />
-          </mesh>
-        ))}
+    <group position={STATION_POS} rotation={[0.3, 0, 0.15]}>
+      <group ref={spinner} scale={normScale}>
+        <group position={offset}>
+          <Clone object={scene} />
+        </group>
       </group>
 
-      <HoloPanel position={[3.2, 1.4, 1.6]} rotation={[0, -0.7, 0]} />
-      <HoloPanel position={[-3.4, 0.8, 2.0]} rotation={[0, 0.6, 0]} scale={0.8} />
-      <HoloPanel position={[0.6, 2.6, 2.6]} rotation={[-0.3, 0, 0]} scale={0.65} />
+      <HoloPanel position={[6, 3, 3]} rotation={[0, -0.7, 0]} />
+      <HoloPanel position={[-6.2, 1.6, 3.4]} rotation={[0, 0.6, 0]} scale={0.8} />
+      <HoloPanel position={[1, 4.6, 4.2]} rotation={[-0.3, 0, 0]} scale={0.65} />
 
-      <pointLight color={CYAN} intensity={6} distance={16} position={[0, 2, 3]} />
-      <pointLight color="#3a1e6d" intensity={4} distance={20} position={[-4, -2, -2]} />
+      <hemisphereLight args={["#dfeaff", "#241542", 1.1]} />
+      <directionalLight color="#ffffff" intensity={3.2} position={[6, 8, 12]} />
+      <directionalLight color="#ffffff" intensity={2.2} position={[-3, 2, 14]} />
+      <directionalLight color="#9fc0ff" intensity={1.4} position={[-8, -2, 4]} />
+      <pointLight color={CYAN} intensity={28} distance={40} position={[2, 4, 10]} />
+      <pointLight color="#ffd9a0" intensity={14} distance={36} position={[10, 5, 6]} />
     </group>
   );
 };
+
+useGLTF.preload("/space_station/scene.gltf");
 
 export default Station;

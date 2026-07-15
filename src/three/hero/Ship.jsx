@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { useGLTF, Clone } from "@react-three/drei";
 import { easing } from "maath";
 import * as THREE from "three";
-import { journeyPoint, SHIP_LEAD } from "../journey";
+import { journeyPoint, SHIP_LEAD, SHIP_ANCHORS } from "../journey";
 import { useSceneStore } from "../../store/scene-store";
 
 const CYAN = "#5ef0ff";
@@ -16,6 +16,9 @@ const Ship = () => {
   const pos = useRef(new THREE.Vector3());
   const ahead = useRef(new THREE.Vector3());
   const aim = useMemo(() => new THREE.Object3D(), []);
+  const heroOffset = useMemo(() => new THREE.Vector3(6, -2, -13), []);
+  const off = useMemo(() => new THREE.Vector3(), []);
+  const fwd = useMemo(() => new THREE.Vector3(), []);
 
   const { normScale, offset } = useMemo(() => {
     const box = new THREE.Box3().setFromObject(scene);
@@ -29,15 +32,43 @@ const Ship = () => {
 
   useFrame((state, delta) => {
     const { globalProgress: g, activeSection } = useSceneStore.getState();
-    const hidden = activeSection === "contact" || activeSection === "work";
-    group.current.visible = !hidden;
-    if (hidden) return;
+    const hover = Math.sin(state.clock.elapsedTime * 0.9) * 0.14;
+
+    if (activeSection === "hero") {
+      const cam = state.camera;
+      off.copy(heroOffset).applyQuaternion(cam.quaternion);
+      pos.current.copy(cam.position).add(off);
+      pos.current.y += hover;
+      easing.damp3(group.current.position, pos.current, 0.3, delta);
+
+      cam.getWorldDirection(fwd);
+      ahead.current.copy(pos.current).addScaledVector(fwd, 6);
+      aim.position.copy(pos.current);
+      aim.lookAt(ahead.current);
+      aim.rotateZ(0.14);
+      aim.rotateX(0.05);
+      easing.dampQ(group.current.quaternion, aim.quaternion, 0.5, delta);
+      return;
+    }
+
+    const anchor = SHIP_ANCHORS[activeSection];
+
+    if (anchor) {
+      pos.current.set(...anchor.pos);
+      pos.current.y += hover;
+      easing.damp3(group.current.position, pos.current, 0.4, delta);
+
+      aim.position.copy(pos.current);
+      aim.lookAt(ahead.current.set(...anchor.look));
+      aim.rotateX(0.05);
+      easing.dampQ(group.current.quaternion, aim.quaternion, 0.5, delta);
+      return;
+    }
 
     const t = Math.min(g + SHIP_LEAD, 1);
     journeyPoint(t, pos.current);
     journeyPoint(Math.min(t + 0.03, 1), ahead.current);
 
-    const hover = Math.sin(state.clock.elapsedTime * 0.9) * 0.14;
     pos.current.y += hover;
 
     group.current.position.lerp(pos.current, 0.1);
