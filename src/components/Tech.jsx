@@ -3,6 +3,8 @@ import Tilt from "react-parallax-tilt";
 import { technologies } from "../constants";
 import { fadeIn } from "../utils/motion";
 import { SectionWrapper } from "../hoc";
+import { translations } from "../constants/i18n";
+import { useLanguageStore } from "../store/language-store";
 
 // Estrellas de Sagitario (el "teapot") proyectadas a 2D, ajustadas al panel:
 // mu, lambda, phi, sigma, xi2, omicron, pi, tau, zeta, delta, gamma, epsilon, eta
@@ -28,14 +30,14 @@ const LABELS = [
   "JS",
   "TS",
   "React",
-  "Redux",
+  "Next.js",
   "Tailwind",
   "Node",
+  "NestJS",
+  "Express",
   "MongoDB",
-  "Three.js",
+  "PostgreSQL",
   "Git",
-  "Figma",
-  "Docker",
 ];
 
 const EDGES = [
@@ -62,6 +64,9 @@ const Corner = ({ className }) => (
 );
 
 const Tech = () => {
+  const language = useLanguageStore((s) => s.language);
+  const t = translations[language].tech;
+
   return (
     <motion.div
       variants={fadeIn("up", "tween", 0.1, 0.7)}
@@ -97,27 +102,44 @@ const Tech = () => {
           <div>
             <div className="flex items-center gap-3">
               <span className="w-2 h-2 rounded-full bg-signal-cyan hud-blink" />
-              <span className="hud-label">Onboard Systems</span>
+              <span className="hud-label">{t.badge}</span>
             </div>
             <h2 className="text-ion-white font-black text-[34px] sm:text-[46px] leading-none mt-3">
-              Instruments.
+              {t.heading}
             </h2>
             <p className="mt-2 text-secondary text-[13px] max-w-md">
-              Cada estrella es una tecnología de mi arsenal.
+              {t.subtext}
             </p>
           </div>
           <div className="flex items-center gap-2 pb-1">
             <span className="w-1.5 h-1.5 rounded-full bg-signal-cyan hud-blink" />
             <span className="hud-label text-[9px] text-secondary">
-              All systems online
+              {t.systemsOnline}
             </span>
           </div>
         </div>
 
         <div className="mt-5 mx-6 sm:mx-8 h-px bg-gradient-to-r from-signal-cyan/40 to-transparent" />
 
+        <div className="sm:hidden grid grid-cols-4 gap-x-3 gap-y-5 px-5 py-7">
+          {technologies.map((tech, i) => (
+            <div key={tech.name} className="flex flex-col items-center gap-1.5">
+              <div className="tech-star grid place-items-center w-11 h-11 rounded-full bg-[#eaf6ff]/95 border border-signal-cyan/60">
+                <img
+                  src={tech.icon}
+                  alt={tech.name}
+                  className="w-6 h-6 object-contain"
+                />
+              </div>
+              <span className="text-[9px] font-semibold tracking-wide text-ion-white text-center whitespace-nowrap">
+                {LABELS[i] ?? tech.name}
+              </span>
+            </div>
+          ))}
+        </div>
+
         <div
-          className="relative h-[330px] sm:h-[380px] m-3 sm:m-5"
+          className="hidden sm:block relative h-[380px] m-5"
           style={{ transform: "translateZ(35px)" }}
         >
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(94,240,255,0.07),transparent_60%)]" />
@@ -151,13 +173,13 @@ const Tech = () => {
                 style={{ left: `${node.x}%`, top: `${node.y}%` }}
               >
                 <div
-                  className="tech-star grid place-items-center w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#eaf6ff]/95 border border-signal-cyan/60 transition-transform duration-300 group-hover:scale-125 group-hover:border-signal-cyan"
+                  className="tech-star grid place-items-center w-12 h-12 rounded-full bg-[#eaf6ff]/95 border border-signal-cyan/60 transition-transform duration-300 group-hover:scale-125 group-hover:border-signal-cyan"
                   style={{ animationDelay: `${(i % 5) * 0.4}s` }}
                 >
                   <img
                     src={tech.icon}
                     alt={tech.name}
-                    className="w-6 h-6 sm:w-7 sm:h-7 object-contain"
+                    className="w-7 h-7 object-contain"
                   />
                 </div>
                 <span className="mt-1.5 text-[10px] font-semibold tracking-wide text-ion-white whitespace-nowrap">

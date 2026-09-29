@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import GltfPlanet from "../GltfPlanet";
 import { WORK_PLANET_POS } from "../journey";
-import { projects } from "../../constants";
+import { PROJECTS_COUNT } from "../../constants";
 import { useSceneStore } from "../../store/scene-store";
 
 const PALETTES = [
@@ -15,7 +15,7 @@ const PALETTES = [
 ];
 
 const PlanetSystem = () => {
-  const count = projects.length;
+  const count = PROJECTS_COUNT;
   const [index, setIndex] = useState(0);
   const group = useRef();
   const scaleGroup = useRef();

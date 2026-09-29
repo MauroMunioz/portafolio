@@ -1,11 +1,13 @@
 import Tilt from "react-parallax-tilt";
 import { motion } from "framer-motion";
 import { styles } from "../styles";
-import { services } from "../constants";
+import { getServices } from "../constants";
 import { fadeIn, textVariant } from "../utils/motion";
 import { SectionWrapper } from "../hoc";
+import { translations } from "../constants/i18n";
+import { useLanguageStore } from "../store/language-store";
 
-const HoloCard = ({ index, title, icon }) => {
+const HoloCard = ({ index, title, icon, panelLabel }) => {
   return (
     <Tilt
       className="xs:w-[250px] w-full pointer-events-auto"
@@ -28,7 +30,7 @@ const HoloCard = ({ index, title, icon }) => {
             {title}
           </h3>
           <span className="hud-label text-[9px] opacity-70">
-            Panel {String(index + 1).padStart(2, "0")}
+            {panelLabel} {String(index + 1).padStart(2, "0")}
           </span>
         </div>
       </motion.div>
@@ -37,31 +39,36 @@ const HoloCard = ({ index, title, icon }) => {
 };
 
 const About = () => {
+  const language = useLanguageStore((s) => s.language);
+  const t = translations[language].about;
+  const services = getServices(language);
+
   return (
     <>
       <motion.div variants={textVariant()}>
         <div className="flex items-center gap-3">
           <span className="w-2 h-2 rounded-full bg-signal-cyan hud-blink" />
-          <span className="hud-label">Orbital Station</span>
+          <span className="hud-label">{t.badge}</span>
         </div>
-        <p className={`${styles.sectionSubText} mt-4`}>Crew manifest</p>
-        <h2 className={styles.sectionHeadText}>Overview.</h2>
+        <p className={`${styles.sectionSubText} mt-4`}>{t.subtext}</p>
+        <h2 className={styles.sectionHeadText}>{t.heading}</h2>
       </motion.div>
 
       <motion.p
         variants={fadeIn("", "", 0.1, 1)}
         className="mt-4 text-secondary text-[17px] max-w-3xl leading-[30px]"
       >
-        I&apos;m a software engineer with experience in TypeScript and
-        JavaScript, and expertise in frameworks like React, Node.js, and
-        Three.js. I approach every system like an expedition: mapping the
-        problem, engineering a resilient architecture, and shipping efficient,
-        user-friendly solutions. Let&apos;s explore what we can build together.
+        {t.paragraph}
       </motion.p>
 
       <div className="mt-20 flex flex-wrap gap-10">
         {services.map((service, index) => (
-          <HoloCard key={service.title} index={index} {...service} />
+          <HoloCard
+            key={service.title}
+            index={index}
+            panelLabel={t.panel}
+            {...service}
+          />
         ))}
       </div>
     </>

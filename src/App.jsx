@@ -10,9 +10,13 @@ import {
 } from "./components";
 import Scene from "./three/Scene";
 import { useScrollProgress } from "./hooks/useScrollProgress";
+import { translations } from "./constants/i18n";
+import { useLanguageStore } from "./store/language-store";
 
 const App = () => {
   useScrollProgress();
+  const language = useLanguageStore((s) => s.language);
+  const t = translations[language].footer;
 
   return (
     <BrowserRouter>
@@ -37,34 +41,34 @@ const App = () => {
         </div>
         <footer className="pointer-events-auto px-6 pb-10 pt-2 text-center">
           <p className="hud-label text-[8px] text-secondary/50 leading-[1.9]">
-            Modelos 3D bajo CC BY 4.0 —{" "}
+            {t.credit} —{" "}
             <a
               href="https://sketchfab.com/3d-models/star-wars-halcon-milenario-d2be38faf4124fb9839853bedce5bcce"
               target="_blank"
               rel="noreferrer"
               className="hover:text-signal-cyan"
             >
-              Halcon Milenario
+              {t.halcon}
             </a>{" "}
-            por albertomarun,{" "}
+            {t.by} albertomarun,{" "}
             <a
               href="https://sketchfab.com/3d-models/stylized-planet-789725db86f547fc9163b00f302c3e70"
               target="_blank"
               rel="noreferrer"
               className="hover:text-signal-cyan"
             >
-              Stylized planet
+              {t.planet}
             </a>{" "}
-            por cmzw,{" "}
+            {t.by} cmzw,{" "}
             <a
               href="https://sketchfab.com/3d-models/space-station-3-a7a6ad10261149cab31aa394bfcf8940"
               target="_blank"
               rel="noreferrer"
               className="hover:text-signal-cyan"
             >
-              Space Station 3
+              {t.station}
             </a>{" "}
-            por re1monsen.
+            {t.by} re1monsen.
           </p>
         </footer>
       </div>

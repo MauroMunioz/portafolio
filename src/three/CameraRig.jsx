@@ -33,10 +33,18 @@ const CameraRig = () => {
   const lookTarget = useRef(new THREE.Vector3());
   const smoothedLook = useRef(new THREE.Vector3());
   const shake = useRef(0);
+  const smoothedProgress = useRef(0);
 
   useFrame((state, delta) => {
     const { globalProgress, transmission, activeSection } =
       useSceneStore.getState();
+
+    smoothedProgress.current = THREE.MathUtils.damp(
+      smoothedProgress.current,
+      globalProgress,
+      4,
+      delta
+    );
 
     if (activeSection === "contact") {
       camPos.current.copy(commsParkPos);
@@ -48,9 +56,12 @@ const CameraRig = () => {
       camPos.current.copy(stationParkPos);
       lookTarget.current.copy(stationLook);
     } else {
-      journeyPoint(globalProgress, camPos.current);
+      journeyPoint(smoothedProgress.current, camPos.current);
       camPos.current.y += 1.4;
-      journeyPoint(Math.min(globalProgress + SHIP_LEAD, 1), lookTarget.current);
+      journeyPoint(
+        Math.min(smoothedProgress.current + SHIP_LEAD, 1),
+        lookTarget.current
+      );
     }
 
     camPos.current.x += state.pointer.x * 0.8;
@@ -67,8 +78,13 @@ const CameraRig = () => {
       camPos.current.y += Math.cos(now * 29) * 0.06 * shake.current;
     }
 
-    easing.damp3(state.camera.position, camPos.current, 0.35, delta);
-    easing.damp3(smoothedLook.current, lookTarget.current, 0.4, delta);
+    const posDist = camPos.current.distanceTo(state.camera.position);
+    const posSmoothTime = THREE.MathUtils.clamp(posDist * 0.05, 0.35, 1.4);
+    easing.damp3(state.camera.position, camPos.current, posSmoothTime, delta);
+
+    const lookDist = lookTarget.current.distanceTo(smoothedLook.current);
+    const lookSmoothTime = THREE.MathUtils.clamp(lookDist * 0.05, 0.4, 1.4);
+    easing.damp3(smoothedLook.current, lookTarget.current, lookSmoothTime, delta);
     state.camera.lookAt(smoothedLook.current);
   });
 
