@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import emailjs from "@emailjs/browser";
+import { track } from "@vercel/analytics";
 import { motion } from "framer-motion";
 
 import { SectionWrapper } from "../hoc";
@@ -76,6 +77,7 @@ const Contact = () => {
           setStatus("success");
           setForm({ name: "", email: "", message: "" });
           setTransmission("sent");
+          track("Email Sent");
           setTimeout(() => setTransmission("idle"), 4000);
         },
         (error) => {
@@ -209,6 +211,7 @@ const Contact = () => {
         onCancel={() => setPendingAction(null)}
         onConfirm={() => {
           setPendingAction(null);
+          track("WhatsApp");
           window.open(whatsappHref, "_blank", "noreferrer");
         }}
       />

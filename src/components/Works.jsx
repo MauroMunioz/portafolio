@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { track } from "@vercel/analytics";
 
 import { SectionWrapper } from "../hoc";
 import { getProjects } from "../constants";
@@ -146,6 +147,7 @@ const Works = () => {
         cancelLabel={tConfirm.cancel}
         onCancel={() => setPendingDemo(null)}
         onConfirm={() => {
+          track("Demo Open", { project: pendingDemo.name });
           window.open(pendingDemo.link, "_blank", "noopener,noreferrer");
           setPendingDemo(null);
         }}

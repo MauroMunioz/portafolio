@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import {
   About,
   Contact,
@@ -26,6 +27,7 @@ const App = () => {
 
   return (
     <BrowserRouter>
+      <Analytics />
       <Suspense fallback={null}>
         <Scene />
       </Suspense>

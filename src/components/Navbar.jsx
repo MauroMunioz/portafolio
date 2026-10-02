@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { track } from "@vercel/analytics";
 
 import { styles } from "../styles";
 import { navLinks } from "../constants";
@@ -17,6 +18,7 @@ const Navbar = () => {
 
   const downloadCv = () => {
     setConfirmCv(false);
+    track("CV Download");
     const a = document.createElement("a");
     a.href = "/cv/Mauro_Munoz_CV.pdf";
     a.download = "Mauro_Munoz_CV.pdf";
