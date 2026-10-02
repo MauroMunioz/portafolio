@@ -1,6 +1,7 @@
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { Preload } from "@react-three/drei";
+import { PerformanceMonitor, Preload } from "@react-three/drei";
+import { LOW_POWER } from "./quality";
 import CameraRig from "./CameraRig";
 import SpaceBackdrop from "./environment/SpaceBackdrop";
 import Ship from "./hero/Ship";
@@ -10,6 +11,8 @@ import PlanetSystem from "./work/PlanetSystem";
 import CommsPlanet from "./contact/CommsPlanet";
 
 const Scene = () => {
+  const [dpr, setDpr] = useState(LOW_POWER ? 1 : 1.5);
+
   return (
     <div
       className="fixed inset-0 z-0"
@@ -20,11 +23,15 @@ const Scene = () => {
       }}
     >
       <Canvas
-        dpr={[1, 1.75]}
+        dpr={dpr}
         camera={{ position: [0, 0.6, 7.5], fov: 50, near: 0.1, far: 400 }}
-        gl={{ antialias: true, powerPreference: "default", stencil: false }}
+        gl={{ antialias: !LOW_POWER, powerPreference: "high-performance", stencil: false }}
         frameloop="always"
       >
+        <PerformanceMonitor
+          onDecline={() => setDpr((d) => Math.max(0.75, d - 0.25))}
+          onIncline={() => setDpr((d) => Math.min(LOW_POWER ? 1.25 : 1.75, d + 0.25))}
+        />
         <color attach="background" args={["#05040c"]} />
         <fog attach="fog" args={["#05040c", 60, 240]} />
 

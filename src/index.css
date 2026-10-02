@@ -501,3 +501,27 @@ html::-webkit-scrollbar {
       -2.6em 0em 0 0em rgba(255, 255, 255, 0.7), -1.8em -1.8em 0 0em #ffffff;
   }
 }
+@media (max-width: 768px), (pointer: coarse) {
+  .glass-panel,
+  .planet-holo,
+  [class*="backdrop-blur"] {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .glass-panel {
+    background: rgba(10, 8, 24, 0.88);
+  }
+
+  .holo-pulse {
+    animation: none;
+    box-shadow: 0 0 12px rgba(94, 240, 255, 0.12);
+  }
+}
+
+@media (max-width: 640px) {
+  p {
+    text-align: justify;
+    hyphens: auto;
+  }
+}

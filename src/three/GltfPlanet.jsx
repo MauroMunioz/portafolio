@@ -12,7 +12,7 @@ const GltfPlanet = ({
   tilt = 0.35,
   hoverRef,
 }) => {
-  const { scene } = useGLTF("/planet/scene.gltf");
+  const { scene } = useGLTF("/planet/scene.glb");
   const spinner = useRef();
 
   const atmosphereUniforms = useMemo(
@@ -60,6 +60,6 @@ const GltfPlanet = ({
   );
 };
 
-useGLTF.preload("/planet/scene.gltf");
+useGLTF.preload("/planet/scene.glb");
 
 export default GltfPlanet;

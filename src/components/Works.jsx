@@ -9,20 +9,6 @@ import { translations } from "../constants/i18n";
 import { useLanguageStore } from "../store/language-store";
 import ConfirmModal from "./ConfirmModal";
 
-const ShipIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
-    <path d="M12 2 L19 20 L12 16 L5 20 Z" />
-  </svg>
-);
-
-const getHostname = (url) => {
-  try {
-    return new URL(url).hostname;
-  } catch {
-    return url;
-  }
-};
-
 const scrollToPlanet = (i, count) => {
   const el = document.querySelector('[data-scene="work"]');
   if (!el) return;
@@ -39,7 +25,6 @@ const Works = () => {
   const tConfirm = translations[language].confirm;
   const projects = getProjects(language);
   const project = focused >= 0 ? projects[focused] : null;
-  const [preview, setPreview] = useState(null);
   const [pendingDemo, setPendingDemo] = useState(null);
 
   return (
@@ -126,7 +111,7 @@ const Works = () => {
       </div>
 
       {active === "work" && (
-        <div className="fixed right-6 top-1/2 -translate-y-1/2 flex flex-col items-center gap-4 pointer-events-auto z-20">
+        <div className="fixed right-6 top-1/2 -translate-y-1/2 flex flex-col items-center gap-4 pointer-events-auto z-20 max-sm:top-auto max-sm:bottom-24 max-sm:right-1/2 max-sm:translate-x-1/2 max-sm:translate-y-0 max-sm:flex-row max-sm:gap-5">
           {projects.map((_, i) => (
             <button
               key={i}
@@ -135,7 +120,7 @@ const Works = () => {
               className="group flex items-center gap-2"
             >
               <span
-                className={`hud-label text-[9px] transition-opacity ${
+                className={`hud-label text-[9px] transition-opacity max-sm:hidden ${
                   focused === i ? "opacity-80" : "opacity-0 group-hover:opacity-60"
                 }`}
               >
@@ -153,63 +138,6 @@ const Works = () => {
         </div>
       )}
 
-      <AnimatePresence>
-        {preview && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-void/50 p-4 sm:p-8 pointer-events-auto"
-            onClick={() => setPreview(null)}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.97 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.97 }}
-              className="glass-panel w-full h-full max-w-5xl flex flex-col overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.6)]"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center gap-3 px-4 py-2.5 border-b border-signal-cyan/15 bg-black-200/60">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-engine-amber/70" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-signal-cyan/70" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-secondary/50" />
-                </div>
-                <div className="flex-1 flex items-center gap-2 bg-black-200/70 border border-signal-cyan/15 rounded-full px-3 py-1.5 min-w-0">
-                  <ShipIcon className="w-3.5 h-3.5 text-signal-cyan shrink-0" />
-                  <span className="hud-label text-[10px] text-secondary truncate">
-                    {getHostname(preview.link)}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  <a
-                    href={preview.link}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hud-label text-[10px] text-secondary hover:text-signal-cyan transition-colors whitespace-nowrap"
-                  >
-                    {t.openNewTab}
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => setPreview(null)}
-                    aria-label={t.close}
-                    className="hud-label text-signal-cyan hover:text-ion-white transition-colors"
-                  >
-                    ✕
-                  </button>
-                </div>
-              </div>
-              <iframe
-                src={preview.link}
-                title={preview.name}
-                className="w-full flex-1 bg-black-200"
-              />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       <ConfirmModal
         open={!!pendingDemo}
         title={pendingDemo ? tConfirm.demo.title(pendingDemo.name) : ""}
@@ -218,7 +146,7 @@ const Works = () => {
         cancelLabel={tConfirm.cancel}
         onCancel={() => setPendingDemo(null)}
         onConfirm={() => {
-          setPreview(pendingDemo);
+          window.open(pendingDemo.link, "_blank", "noopener,noreferrer");
           setPendingDemo(null);
         }}
       />

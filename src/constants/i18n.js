@@ -4,7 +4,7 @@ export const translations = {
     hero: {
       missionReady: "Misión Lista",
       tagline:
-        "Ingeniero de Software navegando un universo abierto de sistemas, APIs e interfaces.",
+        "Ingeniero de software full stack. Diseño y construyo aplicaciones web con React, Next.js y NestJS, desde la interfaz hasta la API, y las llevo a producción.",
       pilot: "Piloto",
       destination: "Destino",
       status: "Estado",
@@ -42,8 +42,6 @@ export const translations = {
       planet: "Planeta",
       scanning: "Escaneando órbita — acércate a un planeta",
       viewLive: "Ver en producción →",
-      openNewTab: "Abrir en pestaña nueva",
-      close: "Cerrar",
       goToPlanet: (n) => `Ir al planeta ${n}`,
       defaultNote: "Aún no está en producción",
     },
@@ -90,7 +88,7 @@ export const translations = {
       demo: {
         title: (name) => `Aproximación a ${name}`,
         message:
-          "Se abrirá una vista en vivo del sitio en producción, dentro de esta misma página.",
+          "Se abrirá el sitio en producción en una pestaña nueva.",
         confirm: "Conectar",
       },
     },
@@ -100,7 +98,7 @@ export const translations = {
     hero: {
       missionReady: "Mission Ready",
       tagline:
-        "Software Engineer navigating an open universe of systems, APIs and interfaces.",
+        "Full stack software engineer. I design and build web apps with React, Next.js and NestJS, from interface to API, and ship them to production.",
       pilot: "Pilot",
       destination: "Destination",
       status: "Status",
@@ -138,8 +136,6 @@ export const translations = {
       planet: "Planet",
       scanning: "Scanning orbit — approach a planet",
       viewLive: "View live →",
-      openNewTab: "Open in new tab",
-      close: "Close",
       goToPlanet: (n) => `Go to planet ${n}`,
       defaultNote: "Not live yet",
     },
@@ -185,7 +181,7 @@ export const translations = {
       demo: {
         title: (name) => `Approaching ${name}`,
         message:
-          "This will open a live view of the production site, right here on this page.",
+          "This will open the production site in a new tab.",
         confirm: "Connect",
       },
     },

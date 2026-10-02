@@ -26,7 +26,7 @@ const HoloPanel = ({ position, rotation, scale = 1 }) => {
 };
 
 const Station = () => {
-  const { scene } = useGLTF("/space_station/scene.gltf");
+  const { scene } = useGLTF("/space_station/scene.glb");
   const spinner = useRef();
 
   const { normScale, offset } = useMemo(() => {
@@ -65,6 +65,6 @@ const Station = () => {
   );
 };
 
-useGLTF.preload("/space_station/scene.gltf");
+useGLTF.preload("/space_station/scene.glb");
 
 export default Station;

@@ -3,6 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { Line, Sparkles } from "@react-three/drei";
 import { CONSTELLATION_POS } from "../journey";
 import { useSceneStore } from "../../store/scene-store";
+import { LOW_POWER } from "../quality";
 
 const CYAN = "#5ef0ff";
 
@@ -21,7 +22,7 @@ const StarNode = ({ position, index }) => {
         <sphereGeometry args={[0.16, 12, 12]} />
         <meshBasicMaterial color="#eaf6ff" />
       </mesh>
-      <pointLight color={CYAN} intensity={1.2} distance={4} />
+      {!LOW_POWER && <pointLight color={CYAN} intensity={1.2} distance={4} />}
     </group>
   );
 };
@@ -74,7 +75,7 @@ const Constellation = ({ nodes = 6 }) => {
           <StarNode position={p} index={i} />
         </group>
       ))}
-      <Sparkles count={40} scale={[10, 7, 5]} size={1.6} speed={0.4} color={CYAN} />
+      <Sparkles count={LOW_POWER ? 15 : 40} scale={[10, 7, 5]} size={1.6} speed={0.4} color={CYAN} />
     </group>
   );
 };

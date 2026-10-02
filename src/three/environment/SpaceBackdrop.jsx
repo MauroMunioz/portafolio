@@ -6,8 +6,10 @@ import * as random from "maath/random";
 import { nebulaVertex, nebulaFragment } from "../shaders/nebula.glsl";
 import { useSceneStore } from "../../store/scene-store";
 import { JOURNEY_LENGTH } from "../journey";
+import { LOW_POWER } from "../quality";
 
-const STREAK_COUNT = 400;
+const STREAK_COUNT = LOW_POWER ? 120 : 400;
+const STAR_FACTOR = LOW_POWER ? 0.35 : 1;
 
 const Warp = () => {
   const ref = useRef();
@@ -165,9 +167,9 @@ const Comet = () => {
 const SpaceBackdrop = () => {
   return (
     <group>
-      <StarLayer count={3000} radius={120} size={0.35} color="#eaf6ff" speed={0.004} />
-      <StarLayer count={2000} radius={80} size={0.22} color="#9fd8ff" speed={0.007} />
-      <StarLayer count={1200} radius={50} size={0.12} color="#c9b8ff" speed={0.011} />
+      <StarLayer count={Math.round(3000 * STAR_FACTOR)} radius={120} size={0.35} color="#eaf6ff" speed={0.004} />
+      <StarLayer count={Math.round(2000 * STAR_FACTOR)} radius={80} size={0.22} color="#9fd8ff" speed={0.007} />
+      <StarLayer count={Math.round(1200 * STAR_FACTOR)} radius={50} size={0.12} color="#c9b8ff" speed={0.011} />
 
       <NebulaPlane
         position={[-45, 20, -110]}
@@ -194,8 +196,12 @@ const SpaceBackdrop = () => {
         opacity={0.12}
       />
 
-      <Comet />
-      <Comet />
+      {!LOW_POWER && (
+        <>
+          <Comet />
+          <Comet />
+        </>
+      )}
 
       <Warp />
     </group>

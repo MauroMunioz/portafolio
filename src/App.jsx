@@ -1,3 +1,4 @@
+import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
 import {
   About,
@@ -8,19 +9,26 @@ import {
   Tech,
   Works,
 } from "./components";
-import Scene from "./three/Scene";
 import { useScrollProgress } from "./hooks/useScrollProgress";
 import { translations } from "./constants/i18n";
 import { useLanguageStore } from "./store/language-store";
+
+const Scene = lazy(() => import("./three/Scene"));
 
 const App = () => {
   useScrollProgress();
   const language = useLanguageStore((s) => s.language);
   const t = translations[language].footer;
 
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
+
   return (
     <BrowserRouter>
-      <Scene />
+      <Suspense fallback={null}>
+        <Scene />
+      </Suspense>
       <div className="relative z-10 pointer-events-none">
         <Navbar />
         <div data-scene="hero">

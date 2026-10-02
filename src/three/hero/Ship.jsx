@@ -11,12 +11,13 @@ const AMBER = "#ff8a3d";
 const TARGET_SIZE = 5.5;
 
 const Ship = () => {
-  const { scene } = useGLTF("/halcon/scene.gltf");
+  const { scene } = useGLTF("/halcon/scene.glb");
   const group = useRef();
   const pos = useRef(new THREE.Vector3());
   const ahead = useRef(new THREE.Vector3());
   const aim = useMemo(() => new THREE.Object3D(), []);
   const heroOffset = useMemo(() => new THREE.Vector3(6, -2, -13), []);
+  const heroOffsetPortrait = useMemo(() => new THREE.Vector3(0.6, -3.6, -14), []);
   const off = useMemo(() => new THREE.Vector3(), []);
   const fwd = useMemo(() => new THREE.Vector3(), []);
 
@@ -33,10 +34,12 @@ const Ship = () => {
   useFrame((state, delta) => {
     const { globalProgress: g, activeSection } = useSceneStore.getState();
     const hover = Math.sin(state.clock.elapsedTime * 0.9) * 0.14;
+    const portrait = state.size.width < state.size.height;
+    group.current.scale.setScalar(portrait ? 0.65 : 1);
 
     if (activeSection === "hero") {
       const cam = state.camera;
-      off.copy(heroOffset).applyQuaternion(cam.quaternion);
+      off.copy(portrait ? heroOffsetPortrait : heroOffset).applyQuaternion(cam.quaternion);
       pos.current.copy(cam.position).add(off);
       pos.current.y += hover;
       easing.damp3(group.current.position, pos.current, 0.3, delta);
@@ -96,6 +99,6 @@ const Ship = () => {
   );
 };
 
-useGLTF.preload("/halcon/scene.gltf");
+useGLTF.preload("/halcon/scene.glb");
 
 export default Ship;

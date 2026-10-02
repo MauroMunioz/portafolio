@@ -34,7 +34,7 @@ const TransmissionBeam = () => {
 };
 
 const CommsPlanet = () => {
-  const { scene } = useGLTF("/planet/scene.gltf");
+  const { scene } = useGLTF("/planet/scene.glb");
   const spinner = useRef();
   const group = useRef();
 
@@ -59,6 +59,6 @@ const CommsPlanet = () => {
   );
 };
 
-useGLTF.preload("/planet/scene.gltf");
+useGLTF.preload("/planet/scene.glb");
 
 export default CommsPlanet;

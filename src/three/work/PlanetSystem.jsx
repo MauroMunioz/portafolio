@@ -14,6 +14,8 @@ const PALETTES = [
   { glowColor: "#c49fff", ringColor: "#c49fff" },
 ];
 
+const PORTRAIT_POS = [0.5, -2.6, -60];
+
 const PlanetSystem = () => {
   const count = PROJECTS_COUNT;
   const [index, setIndex] = useState(0);
@@ -36,7 +38,7 @@ const PlanetSystem = () => {
     document.body.style.cursor = "auto";
   };
 
-  useFrame((_state, delta) => {
+  useFrame((state, delta) => {
     const { activeSection, sectionProgress } = useSceneStore.getState();
     const inWork = activeSection === "work";
 
@@ -60,7 +62,10 @@ const PlanetSystem = () => {
     group.current.visible = shown.current > 0.01;
 
     const boost = hover.current ? 0.15 : 0;
-    scaleGroup.current.scale.setScalar(shown.current + boost);
+    const portrait = state.size.width < state.size.height;
+    const sizeFactor = portrait ? 0.4 : 1;
+    group.current.position.set(...(portrait ? PORTRAIT_POS : WORK_PLANET_POS));
+    scaleGroup.current.scale.setScalar((shown.current + boost) * sizeFactor);
 
     if (ringRef.current) {
       const ring = PALETTES[idx].ringColor;
